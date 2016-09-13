@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+	<style>
+
+		body {
+		  font: 8px sans-serif;
+		}
+
+		.axis path,
+		.axis line {
+		  fill: none;
+		  stroke: #000;
+		  shape-rendering: crispEdges;
+		}
+
+		.x.axis path {
+		  display: 2px;
+		}
+
+		.line {
+		  fill: none;
+		  stroke: steelblue;
+		  stroke-width: 2px;
+		}
+
+	</style>
+
+<body>
+	<script src="http://d3js.org/d3.v3.js"></script>
+    {% load staticfiles %}
+	<script src="{% static "charts/charts_functions.js" %}"></script>
+
+Orders pour la market {{marketname}}
+	<div class="chart1">
+	</div>
+
+	<script>
+		var chart_conf = {
+			margin     : {top: 20, right: 80, bottom: 30, left: 50},
+			width      : 700 ,
+			height     : 300 ,
+			whereToAdd : ".chart1" ,
+			file       : "/api/{{marketname}}/active_users.csv?start={{start}}&end={{end}}" ,
+			yAxisLabel : "Utilisateurs"
+		}
+
+		linechart1(chart_conf)
+
+	</script>
+
+
+    {% if dbug %}
+    /api/{{marketname}}/active_users.csv?start={{start}}&end={{end}}
+    {% endif %}
+
+
+</body>
+
+
+
+
+

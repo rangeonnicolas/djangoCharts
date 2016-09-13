@@ -1,0 +1,94 @@
+
+<!DOCTYPE html>
+
+<html lang="fr-fr" >
+<head>
+    <title>Log in</title>
+
+    <link rel="styleitem" type="text/css" href="/static/admin/css/base.css" />
+    <link rel="styleitem" type="text/css" href="/static/admin/css/login.css" />
+    <!--[if lte IE 7]><link rel="styleitem" type="text/css" href="/static/admin/css/ie.css" /><![endif]-->
+</head>
+
+
+
+
+<body class=" login">
+
+<!-- Container -->
+<div id="container">
+
+
+    <!-- Header -->
+    <div id="header">
+        <div id="branding">
+
+<h1 id="site-name">Se connecter</h1>
+
+        </div>
+
+    </div>
+    <!-- END Header -->
+
+    <!-- Content -->
+    <div id="content" class="colM">
+
+
+
+     <div id="content-main">
+
+    {% if error %}
+
+    <p><strong>Utilisateur inconnu ou mauvais de mot de passe.</strong></p>
+
+    {% endif %}
+
+
+    {% if user.is_authenticated %}
+
+    Vous êtes connecté, {{ user.username }} !
+
+    {% else %}
+
+    <form method="post" action="." id="login-form">
+
+          <div class="form-row">
+        {% csrf_token %}
+
+        {{ form.as_p }}
+  </div>
+  <div class="submit-row">
+    <label>&nbsp;</label><input type="submit" value="Se connecter" />
+  </div>
+
+    </form>
+
+    {% endif %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</div>
+
+
+        <br class="clear" />
+    </div>
+    <!-- END Content -->
+
+    <div id="footer"></div>
+</div>
+<!-- END Container -->
+
+</body>
+</html>

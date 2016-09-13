@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" type="text/javascript"></script>
+    <script src="http://d3js.org/d3.v3.js"></script>
+	<script type="text/javascript">
+
+        var views = []
+        var premises = []
+        var ids = []
+        var conclusions = []
+
+        function computeExpectancy(views,premises){
+            var nbViews = 0;
+            var nbPremisezedViews = 0;
+            for(var i=0 ; i< views.length ; i++){
+                nbViews += views[i];
+                if(premises[i] > 0){
+                    nbPremisezedViews += views[i]
+                }
+            }
+            console.log(nbViews,nbPremisezedViews);
+            return nbPremisezedViews/nbViews
+        }
+
+
+
+        d3.csv("/api/{{marketname}}/reco_rules_frequencies.csv?{% if ruleset_id %}ruleset_id={{ruleset_id}}{% endif %}",
+            function(error, data) {
+                data.forEach(function(e){
+                    views.push(parseInt(e.views));
+                    premises.push(parseInt(e.premises));
+                    conclusions.push(parseInt(e.conclusions));
+                    ids.push(e.item);
+                })
+
+                $(function () {
+
+                    $('#container').highcharts({
+                        chart: {
+                            zoomType: 'xy',
+                            panning: true,
+                            panKey: 'shift'
+                        },
+                        plotOptions: {
+                            column: {
+                                grouping: false,
+                                shadow: false,
+                                borderWidth: 0
+                            }
+                        },
+                        title: {
+                            text: 'Fréquence d\'apparition des fiches dans les règles de recommandation'
+                        },
+                        subtitle: {
+                            text: ('Espérance mathématique: ' + (100*computeExpectancy(views,premises))).substring(0,5+24) + '%' //troll
+                        },
+                        xAxis: [{
+                            categories: ids,
+                            crosshair: true
+                        }],
+                        yAxis: [
+                         {
+                            title: {
+                                text: 'Apparitions dans les conclusions OU prémisses',
+                                style: {
+                                    color: Highcharts.getOptions().colors[0]
+                                }
+                            },
+                            labels: {
+                                format: '{value} fois',
+                                style: {
+                                    color: Highcharts.getOptions().colors[0]
+                                }
+                            }
+
+                        },{
+                            labels: {
+                                format: '{value} vues',
+                                style: {
+                                    color: Highcharts.getOptions().colors[1]
+                                }
+                            },
+                            title: {
+                                text: 'fréquentation de la fiche',
+                                style: {
+                                    color: Highcharts.getOptions().colors[1]
+                                }
+                            },
+                            opposite: true
+                        }],
+                        tooltip: {
+                            shared: true
+                        },
+                        legend: {
+                            layout: 'vertical',
+                            align: 'left',
+                            x: 120,
+                            verticalAlign: 'top',
+                            y: 100,
+                            floating: true,
+                            backgroundColor: (Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'
+                        },
+                        series: [
+                        {
+                            name: 'Conclusions',
+                            pointPadding:0.2,
+                            groupPadding:0,
+                            type: 'column',
+                            yAxis: 0,
+                            data: conclusions,
+                            tooltip: {
+                                valueSuffix: ' fois'
+                            },
+                            color: Highcharts.getOptions().colors[0]
+
+                        },{
+                            name: 'Prémises',
+                            pointPadding:0,
+                            groupPadding:0,
+                            type: 'column',
+                            yAxis: 0,
+                            data: premises,
+                            tooltip: {
+                                valueSuffix: ' fois'
+                            },
+                            color: 'rgba(186,60,61,.6)'
+
+                        },
+                        {
+                            name: 'Vues',
+                            type: 'spline',
+                            yAxis: 1,
+                            data: views,
+                            tooltip: {
+                                valueSuffix: ' fois'
+                            },
+
+                            color: Highcharts.getOptions().colors[1]
+
+                        }]
+                    });
+
+                    $('#container').append("<br/>");
+                    $('#container').append(views.toString());
+                    $('#container').append("<br/>");
+                    $('#container').append(premises.toString());
+                    $('#container').append("<br/>");
+                    $('#container').append(conclusions.toString());
+                    $('#container').append("<br/>");
+                    $('#container').append(ids.toString());
+                });
+
+
+
+
+
+
+            }
+        )
+        ;
+
+	</script>
+    <script src="http://code.highcharts.com/highcharts.js"></script>
+    <script src="http://code.highcharts.com/modules/exporting.js"></script>
+
+<body>
+
+
+    <div id="container" style="min-width: 310px; height: 1000px; margin: 0 auto"></div>
+
+
+
+</body>
+
+
+
+
+
